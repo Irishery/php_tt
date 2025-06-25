@@ -1,0 +1,24 @@
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_name TEXT NOT NULL UNIQUE,
+    hashed_password TEXT NOT NULL,
+    last_login TIMESTAMP NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE urls
+ADD COLUMN user_id INT NULL,
+ADD COLUMN redirect_count INT DEFAULT 0;
+
+ALTER TABLE urls
+ADD CONSTRAINT fk_user_id
+FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL;
+
+CREATE TABLE IF NOT EXISTS url_analytics (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    url_id INT NOT NULL,
+    ip_address TEXT NOT NULL,
+    country TEXT NULL,
+    redirected_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (url_id) REFERENCES urls(id) ON DELETE CASCADE
+);

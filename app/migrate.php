@@ -2,7 +2,6 @@
 require_once __DIR__ . '/Core/Database.php';
 
 $pdo = Database::connect();
-echo'ASDASD';
 
 // Создаём таблицу для отслеживания миграций
 $pdo->exec("CREATE TABLE IF NOT EXISTS migrations (name VARCHAR(255) PRIMARY KEY, migrated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)");

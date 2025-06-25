@@ -12,8 +12,8 @@ spl_autoload_register(function ($class) {
 });
 
 $router = new Router();
-$router->get('/', 'HomeController@index');
-$router->post('/shorten', 'HomeController@shorten');
-$router->get('/r/(.*)', 'HomeController@redirect');
+$router->get('/', 'UrlController@index');
+$router->post('/shorten', 'UrlController@shorten');
+$router->get('/r/(.*)', 'UrlController@redirect');
 
 $router->dispatch($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);

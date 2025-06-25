@@ -72,3 +72,6 @@
 | GET   | `/r/{code}` | Перенаправить на оригинальный URL |
 
 
+## Схема БД
+https://drive.google.com/file/d/1F2IGthCdVf5Yiol2nMqpCiwZ15kU2esm/view?usp=sharing
+
