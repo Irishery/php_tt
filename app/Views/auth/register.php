@@ -1,0 +1,15 @@
+<h2>Регистрация</h2>
+<?php if (!empty($error)) echo "<p style='color:red;'>$error</p>"; ?>
+<form method="post" action="/register">
+    <label>Имя пользователя:</label><br>
+    <input type="text" name="username" required><br><br>
+
+    <label>Email:</label><br>
+    <input type="email" name="email" required><br><br>
+
+    <label>Пароль:</label><br>
+    <input type="password" name="password" required><br><br>
+
+    <button type="submit">Зарегистрироваться</button>
+</form>
+<p>Уже есть аккаунт? <a href="/login">Войти</a></p>

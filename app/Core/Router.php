@@ -1,20 +1,25 @@
 <?php
-class Router {
+class Router
+{
     private $routes = [];
 
-    public function get($pattern, $action) {
+    public function get($pattern, $action)
+    {
         $this->addRoute('GET', $pattern, $action);
     }
 
-    public function post($pattern, $action) {
+    public function post($pattern, $action)
+    {
         $this->addRoute('POST', $pattern, $action);
     }
 
-    private function addRoute($method, $pattern, $action) {
+    private function addRoute($method, $pattern, $action)
+    {
         $this->routes[] = ['method' => $method, 'pattern' => "#^$pattern$#", 'action' => $action];
     }
 
-    public function dispatch($uri, $method) {
+    public function dispatch($uri, $method)
+    {
         $uri = strtok($uri, '?');
         foreach ($this->routes as $route) {
             if ($method === $route['method'] && preg_match($route['pattern'], $uri, $params)) {

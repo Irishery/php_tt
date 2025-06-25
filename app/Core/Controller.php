@@ -1,10 +1,13 @@
 <?php
 class Controller
 {
-    protected function view($name, $data = [])
+    public function view(string $template, array $params = [])
     {
-        extract($data);
-        require __DIR__ . "/../Views/$name.php";
+        extract($params); // превращает ['error' => 'x'] в $error
+        ob_start();
+        require __DIR__ . "/../Views/{$template}.php";
+        $content = ob_get_clean();
+        require __DIR__ . '/../Views/layout.php';
     }
 
     protected function respond($data, $statusCode = 200)
@@ -20,6 +23,15 @@ class Controller
             echo json_encode($data);
         } else {
             $this->view('result', $data);
+        }
+    }
+
+    protected function requireAuth()
+    {
+        session_start();
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: /login");
+            exit;
         }
     }
 }

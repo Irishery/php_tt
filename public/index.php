@@ -12,8 +12,20 @@ spl_autoload_register(function ($class) {
 });
 
 $router = new Router();
+
+// URL 
 $router->get('/', 'UrlController@index');
 $router->post('/shorten', 'UrlController@shorten');
 $router->get('/r/(.*)', 'UrlController@redirect');
+
+// AUTH
+$router->get('/login', 'AuthController@showLogin');
+$router->post('/login', 'AuthController@login');
+
+$router->get('/register', 'AuthController@showRegister');
+$router->post('/register', 'AuthController@register');
+
+$router->get('/logout', 'AuthController@logout');
+
 
 $router->dispatch($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);

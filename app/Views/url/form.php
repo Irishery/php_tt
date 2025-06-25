@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html>
-<head><title>Сократить ссылку</title></head>
+
+<head>
+  <title>Сократить ссылку</title>
+</head>
+
 <body>
   <h1>Введите ссылку</h1>
   <form method="POST" action="/shorten">
@@ -8,4 +12,5 @@
     <button type="submit">Сократить</button>
   </form>
 </body>
+
 </html>

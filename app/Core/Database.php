@@ -1,8 +1,10 @@
 <?php
-class Database {
+class Database
+{
     private static $pdo;
 
-    public static function connect() {
+    public static function connect()
+    {
         if (!self::$pdo) {
             $cfg = require __DIR__ . '/../../config/config.php';
             $db = $cfg['db'];
