@@ -22,7 +22,7 @@ class Controller
             http_response_code($statusCode);
             echo json_encode($data);
         } else {
-            $this->view('result', $data);
+            $this->view('url/result', $data);
         }
     }
 

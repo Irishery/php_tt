@@ -8,7 +8,7 @@ class AuthController extends Controller
 
     public function __construct()
     {
-        $config = require __DIR__ . '/../config.php';
+        $config = require __DIR__ . '/../../config/config.php';
         $this->baseUrl = rtrim($config['base_url'], '/');
     }
 

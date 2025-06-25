@@ -9,7 +9,7 @@ class UrlController extends Controller
 
     public function __construct()
     {
-        $config = require __DIR__ . '/../config.php';
+        $config = require __DIR__ . '/../../config/config.php';
         $this->baseUrl = rtrim($config['base_url'], '/');
     }
 
@@ -21,7 +21,7 @@ class UrlController extends Controller
             exit;
         }
 
-        $this->view('form');
+        $this->view('url/form');
     }
 
     public function shorten()
@@ -45,7 +45,7 @@ class UrlController extends Controller
 
         $this->respond([
             'original_url' => $original,
-            'short_url' => "{$this->baseUrl}/$short"
+            'short' => "{$this->baseUrl}/$short"
         ]);
     }
 

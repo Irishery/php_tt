@@ -8,10 +8,10 @@ class Url
         $this->pdo = Database::connect();
     }
 
-    public function save($original, $short)
+    public function save($original, $short, $user_id)
     {
-        $stmt = $this->pdo->prepare("INSERT INTO urls (original_url, short_code) VALUES (?, ?)");
-        $stmt->execute([$original, $short]);
+        $stmt = $this->pdo->prepare("INSERT INTO urls (original_url, short_code, created_at, user_id) VALUES (?, ?, CURRENT_TIMESTAMP, ?)");
+        $stmt->execute([$original, $short, $user_id]);
     }
 
     public function findByCode($code)
