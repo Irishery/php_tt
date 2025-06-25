@@ -9,7 +9,7 @@ $pdo->exec("CREATE TABLE IF NOT EXISTS migrations (name VARCHAR(255) PRIMARY KEY
 
 $applied = $pdo->query("SELECT name FROM migrations")->fetchAll(PDO::FETCH_COLUMN) ?: [];
 
-$files = glob(__DIR__ . '/../migrations/*.sql');
+$files = glob(__DIR__ . '/migrations/*.sql');
 sort($files);
 
 foreach ($files as $file) {

@@ -1,30 +1,46 @@
-#!/bin/bash
+set -e
 
-set -e  # Прекращать выполнение при ошибках
-
-echo "🧹 Остановка и очистка старых контейнеров..."
+echo "🛑 Останавливаем и очищаем контейнеры..."
 docker-compose down -v
 
-echo "🔧 Сборка образов..."
-docker-compose build
+echo "🔧 Пересобираем контейнеры с очисткой кеша..."
+docker-compose build --no-cache
 
-echo "🚀 Запуск контейнеров..."
+echo "🚀 Запускаем контейнеры в фоновом режиме..."
 docker-compose up -d
 
-echo "⏳ Ожидание запуска MariaDB..."
-sleep 10
+echo "⏳ Ожидаем готовности MariaDB (макс 30 секунд)..."
+for i in {1..30}; do
+  # Улучшенная проверка через mysqladmin ping
+  if docker-compose exec db mysqladmin ping -h localhost -u root -proot --silent; then
+    echo "✅ MariaDB готова к подключению"
+    break
+  fi
+  echo "⌛ Ожидание готовности БД ($i/30)..."
+  sleep 2
+done
 
-echo "🔍 Поиск PHP-контейнера..."
-PHP_CONTAINER=$(docker ps -qf "name=php")
-
-if [ -z "$PHP_CONTAINER" ]; then
-  echo "❌ Не удалось найти контейнер с PHP"
-  docker ps
+# Проверка успешности ожидания
+if ! docker-compose exec db mysqladmin ping -h localhost -u root -proot --silent; then
+  echo "❌ MariaDB не запустилась за отведенное время"
+  docker-compose logs db
   exit 1
 fi
 
-echo "🗃 Применение миграций в контейнере $PHP_CONTAINER..."
-docker exec -it "$PHP_CONTAINER" php app/migrate.php
+echo "🔍 Проверка подключения из PHP-контейнера..."
+docker-compose exec php php -r "
+require_once '/var/www/html/app/Core/Database.php'; 
+try {
+    \$pdo = Database::connect();
+    echo '✅ Подключение успешно. Версия БД: '.\$pdo->getAttribute(PDO::ATTR_SERVER_VERSION).\"\n\";
+} catch (PDOException \$e) {
+    echo '❌ Ошибка подключения: '.\$e->getMessage().\"\n\";
+    exit(1);
+}
+"
+
+echo "🗃 Применение миграций..."
+docker-compose exec php php /var/www/html/app/migrate.php
 
 echo ""
-echo "✅ Всё готово. Открой в браузере: http://localhost:8000"
+echo "🌍 Готово! Приложение доступно по http://localhost:8000"
