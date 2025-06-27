@@ -27,4 +27,11 @@ class Url
         $stmt->execute([$code]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    public function getAllByUser(int $userId): array
+    {
+        $stmt = $this->pdo->prepare("SELECT * FROM urls WHERE user_id = ? ORDER BY created_at DESC");
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

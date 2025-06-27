@@ -27,5 +27,9 @@ $router->post('/register', 'AuthController@register');
 
 $router->get('/logout', 'AuthController@logout');
 
+// ANAL
+$router->get('/analytics', 'AnalyticsController@index');
+
+
 
 $router->dispatch($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);

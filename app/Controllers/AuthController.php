@@ -29,7 +29,7 @@ class AuthController extends Controller
 
         if ($userId !== false) {
             $_SESSION['user_id'] = $userId;
-            header("Location: {$this->baseUrl}/dashboard");
+            header("Location: {$this->baseUrl}/analytics");
         } else {
             $this->view('auth/login', ['error' => 'Неверный email или пароль']);
         }

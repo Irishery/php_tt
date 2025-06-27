@@ -20,7 +20,7 @@
 
     <nav>
         <a href="/">🏠 Главная</a> |
-        <a href="/analytics/example">📊 Аналитика</a> |
+        <a href="/analytics">📊 Аналитика</a> |
         <?php if (!empty($_SESSION['user_id'])): ?>
             <a href="/logout">🚪 Выйти</a>
         <?php else: ?>

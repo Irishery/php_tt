@@ -2,6 +2,8 @@
 
 require_once __DIR__ . '/../Models/Url.php';
 require_once __DIR__ . '/../Models/Analytics.php';
+require_once __DIR__ . '/../helpers/geo.php';
+
 
 class UrlController extends Controller
 {
@@ -45,7 +47,7 @@ class UrlController extends Controller
 
         $this->respond([
             'original_url' => $original,
-            'short' => "{$this->baseUrl}/$short"
+            'short' => "$short"
         ]);
     }
 
@@ -56,7 +58,7 @@ class UrlController extends Controller
 
         $urlRow = $urlModel->findFullByCode($code); // должен возвращать всю строку, включая `id`
         if ($urlRow) {
-            $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+            $ip = getClientIp();  // вместо $_SERVER['REMOTE_ADDR']
             $analytics->logClick((int)$urlRow['id'], $ip);
 
             header("Location: " . $urlRow['original_url']);
