@@ -22,7 +22,7 @@ services:
     volumes:
       - .:/var/www/html
     ports:
-      - "8080:8000"    # Проброс порта 8080 с хоста на 8000 в контейнере
+      - "80:8000"
     depends_on:
       db:
         condition: service_healthy
