@@ -10,20 +10,22 @@ class Controller
         require __DIR__ . '/../Views/layout.php';
     }
 
-    protected function respond($data, $statusCode = 200)
+    protected function respondJson($data, int $statusCode = 200): void
     {
-        $acceptJson = strpos($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') !== false;
-        $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
-            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
-        $wantsJson = $acceptJson || $isAjax || isset($_GET['format']) && $_GET['format'] === 'json';
+        header('Content-Type: application/json');
+        http_response_code($statusCode);
+        echo json_encode($data);
+        exit;
+    }
 
-        if ($wantsJson) {
-            header('Content-Type: application/json');
-            http_response_code($statusCode);
-            echo json_encode($data);
-        } else {
-            $this->view('url/result', $data);
-        }
+    protected function respondView(string $template, array $params = []): void
+    {
+        $this->view($template, $params);
+    }
+
+    protected function respondError(string $message, int $statusCode = 400): void
+    {
+        $this->respondJson(['error' => $message], $statusCode);
     }
 
     protected function requireAuth()
@@ -33,5 +35,29 @@ class Controller
             header("Location: /login");
             exit;
         }
+    }
+
+    protected function requireApiAuth()
+    {
+        $headers = getallheaders();
+        $authHeader = $headers['Authorization'] ?? '';
+
+        if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+            $token = $matches[1];
+        } else {
+            http_response_code(401);
+            echo json_encode(['error' => 'Authorization header missing']);
+            exit;
+        }
+
+        $auth = new Auth();
+        $user = $auth->findByApiToken($token);
+        if (!$user) {
+            http_response_code(401);
+            echo json_encode(['error' => 'Invalid token']);
+            exit;
+        }
+
+        $_SESSION['user_id'] = $user['id'];
     }
 }

@@ -33,12 +33,11 @@ function getClientIp(): string
         'HTTP_X_FORWARDED_FOR',
         'HTTP_CLIENT_IP',
         'HTTP_X_REAL_IP',
-        'HTTP_CF_CONNECTING_IP',  // Cloudflare
     ];
 
     foreach ($headers as $key) {
         if (!empty($_SERVER[$key])) {
-            $ipList = explode(',', $_SERVER[$key]); // могут быть несколько IP через запятую
+            $ipList = explode(',', $_SERVER[$key]);
             foreach ($ipList as $ip) {
                 $ip = trim($ip);
                 if (filter_var($ip, FILTER_VALIDATE_IP)) {

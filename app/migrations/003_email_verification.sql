@@ -1,0 +1,3 @@
+ALTER TABLE users 
+ADD COLUMN is_verified TINYINT DEFAULT 0,
+ADD COLUMN verification_token TEXT DEFAULT NULL;

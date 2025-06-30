@@ -3,28 +3,33 @@
 
 <head>
     <meta charset="UTF-8">
-    <title><?= $title ?? 'Приложение' ?></title>
+    <title><?= htmlspecialchars($title ?? 'Приложение') ?></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap для красивого UI -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
         body {
-            font-family: sans-serif;
-            margin: 40px;
+            padding: 2rem;
         }
 
-        nav {
-            margin-bottom: 20px;
+        nav a {
+            margin-right: 1rem;
+            text-decoration: none;
         }
     </style>
 </head>
 
 <body>
 
-    <nav>
-        <a href="/">🏠 Главная</a> |
-        <a href="/analytics">📊 Аналитика</a> |
+    <nav class="mb-4">
+        <a href="/" class="btn btn-outline-primary">🏠 Главная</a>
+        <a href="/analytics" class="btn btn-outline-info">📊 Аналитика</a>
         <?php if (!empty($_SESSION['user_id'])): ?>
-            <a href="/logout">🚪 Выйти</a>
+            <a href="/logout" class="btn btn-outline-danger">🚪 Выйти</a>
         <?php else: ?>
-            <a href="/login">🔐 Войти</a>
+            <a href="/login" class="btn btn-outline-success">🔐 Войти</a>
         <?php endif; ?>
     </nav>
 

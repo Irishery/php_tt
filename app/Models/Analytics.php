@@ -11,7 +11,6 @@ class Analytics
         $this->pdo = Database::connect();
     }
 
-    // 🔄 Лог клика: сохраняем url_id, ip, страну
     public function logClick(int $urlId, string $ip): bool
     {
         $country = $this->resolveCountry($ip);
@@ -20,7 +19,18 @@ class Analytics
         INSERT INTO url_analytics (url_id, ip_address, country)
         VALUES (?, ?, ?)
     ");
+
+        $this->addClickToUrls($urlId);
+
         return $stmt->execute([$urlId, $ip, $country]);
+    }
+
+    private function addClickToUrls(int $urlId): void
+    {
+        $stmt = $this->pdo->prepare("
+            UPDATE urls SET redirect_count = redirect_count + 1 WHERE id = ?
+        ");
+        $stmt->execute([$urlId]);
     }
 
     private function resolveCountry(string $ip): ?string
@@ -35,7 +45,6 @@ class Analytics
             return 'Local';
         }
 
-        // Переход на другой сервис, напр. ip-api.com
         $json = @file_get_contents("http://ip-api.com/json/{$ip}");
         $data = json_decode($json, true);
 
@@ -48,7 +57,6 @@ class Analytics
 
 
 
-    // 📊 Количество переходов по url_id
     public function getClickCount(int $urlId): int
     {
         $stmt = $this->pdo->prepare("
@@ -58,7 +66,6 @@ class Analytics
         return (int)$stmt->fetchColumn();
     }
 
-    // 📋 Подробная статистика по ссылке
     public function getClicks(int $urlId): array
     {
         $stmt = $this->pdo->prepare("

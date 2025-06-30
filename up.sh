@@ -1,51 +1,65 @@
+#!/bin/bash
 set -e
 
-if [[ "$1" == "--reset" ]]; then
-  echo "🧨 Удаляем volume с базой данных..."
-  docker-compose down -v
-else
-  echo "🛑 Останавливаем контейнеры без удаления данных..."
-  docker-compose down
+# Загружаем переменные из .env
+if [ -f .env ]; then
+  export $(grep -v '^#' .env | xargs)
 fi
 
-echo "🔧 Пересобираем контейнеры с очисткой кеша..."
-docker-compose build --no-cache
+MODE="dev"
+if [[ "$1" == "--prod" ]]; then
+  MODE="prod"
+fi
 
-echo "🚀 Запускаем контейнеры в фоновом режиме..."
-docker-compose up -d
+echo "Выбран режим: $MODE"
 
-echo "⏳ Ожидаем готовности MariaDB (макс 30 секунд)..."
+if [[ "$2" == "--reset" ]]; then
+  echo "Удаление volume базы данных..."
+  docker-compose -f docker-compose.$MODE.yml down -v
+else
+  echo "Остановка контейнеров без удаления данных..."
+  docker-compose -f docker-compose.$MODE.yml down
+fi
+
+echo "Пересборка контейнеров..."
+docker-compose -f docker-compose.$MODE.yml build --no-cache
+
+echo "Запуск контейнеров..."
+docker-compose -f docker-compose.$MODE.yml up -d
+
+echo "Ожидание готовности MariaDB (максимум 30 секунд)..."
 for i in {1..30}; do
-  # Улучшенная проверка через mysqladmin ping
-  if docker-compose exec db mysqladmin ping -h localhost -u root -proot --silent; then
-    echo "✅ MariaDB готова к подключению"
+  if docker-compose -f docker-compose.$MODE.yml exec db mysqladmin ping -h localhost -u root -proot --silent; then
+    echo "MariaDB готова к подключению"
     break
   fi
-  echo "⌛ Ожидание готовности БД ($i/30)..."
-  sleep 2
+  echo "Ожидание ($i/30)..."
+  sleep 1
 done
 
-# Проверка успешности ожидания
-if ! docker-compose exec db mysqladmin ping -h localhost -u root -proot --silent; then
-  echo "❌ MariaDB не запустилась за отведенное время"
-  docker-compose logs db
+if ! docker-compose -f docker-compose.$MODE.yml exec db mysqladmin ping -h localhost -u root -proot --silent; then
+  echo "MariaDB не запустилась за отведённое время"
+  docker-compose -f docker-compose.$MODE.yml logs db
   exit 1
 fi
 
-echo "🔍 Проверка подключения из PHP-контейнера..."
-docker-compose exec php php -r "
-require_once '/var/www/html/app/Core/Database.php'; 
+echo "Проверка подключения из PHP-контейнера..."
+docker-compose -f docker-compose.$MODE.yml exec php php -r "
+require_once '/var/www/html/app/Core/Database.php';
 try {
     \$pdo = Database::connect();
-    echo '✅ Подключение успешно. Версия БД: '.\$pdo->getAttribute(PDO::ATTR_SERVER_VERSION).\"\n\";
+    echo 'Подключение успешно. Версия базы данных: ' . \$pdo->getAttribute(PDO::ATTR_SERVER_VERSION) . \"\n\";
 } catch (PDOException \$e) {
-    echo '❌ Ошибка подключения: '.\$e->getMessage().\"\n\";
+    echo 'Ошибка подключения: ' . \$e->getMessage() . \"\n\";
     exit(1);
 }
 "
 
-echo "🗃 Применение миграций..."
-docker-compose exec php php /var/www/html/app/migrate.php
+echo "Применение миграций..."
+docker-compose -f docker-compose.$MODE.yml exec php php /var/www/html/app/migrate.php
 
-echo ""
-echo "🌍 Готово! Приложение доступно по http://localhost:8000"
+echo
+
+URL="${BASE_URL:-http://localhost:8000}"
+
+echo "Готово. Приложение доступно по адресу $URL"

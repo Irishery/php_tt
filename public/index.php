@@ -30,6 +30,11 @@ $router->get('/logout', 'AuthController@logout');
 // ANAL
 $router->get('/analytics', 'AnalyticsController@index');
 
+$router->get('/verify', 'AuthController@verify');
+$router->post('/resend-verification', 'AuthController@resend');
 
+$router->post('/api/login', 'AuthController@apiLogin');
+$router->get('/api/analytics', 'AnalyticsController@apiIndex');
+$router->get('/api/shorten', 'UrlController@apiShorten');
 
 $router->dispatch($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);

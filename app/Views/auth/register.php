@@ -1,15 +1,34 @@
-<h2>Регистрация</h2>
-<?php if (!empty($error)) echo "<p style='color:red;'>$error</p>"; ?>
-<form method="post" action="/register">
-    <label>Имя пользователя:</label><br>
-    <input type="text" name="username" required><br><br>
+<div class="container" style="max-width: 500px;">
+    <h2 class="mb-4 text-center">Регистрация</h2>
 
-    <label>Email:</label><br>
-    <input type="email" name="email" required><br><br>
+    <?php if (!empty($error)): ?>
+        <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
+    <?php endif; ?>
 
-    <label>Пароль:</label><br>
-    <input type="password" name="password" required><br><br>
+    <?php if (!empty($success)): ?>
+        <div class="alert alert-success"><?= htmlspecialchars($success) ?></div>
+    <?php endif; ?>
 
-    <button type="submit">Зарегистрироваться</button>
-</form>
-<p>Уже есть аккаунт? <a href="/login">Войти</a></p>
+    <form method="POST" action="/register">
+        <div class="mb-3">
+            <label class="form-label">Имя пользователя</label>
+            <input name="username" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input name="email" type="email" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Пароль</label>
+            <input name="password" type="password" class="form-control" required>
+        </div>
+
+        <button class="btn btn-success w-100">Зарегистрироваться</button>
+    </form>
+
+    <p class="mt-3 text-center">
+        Уже есть аккаунт? <a href="/login">Войти</a>
+    </p>
+</div>
