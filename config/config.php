@@ -24,20 +24,19 @@ if (empty($env['DB_HOST'])) {
 
 return [
     'db' => [
-        'host' => $env['DB_HOST'] ?? '',
-        'dbname' => $env['DB_NAME'] ?? '',
-        'user' => $env['DB_USER'] ?? '',
-        'password' => $env['DB_PASS'] ?? '',
-        'port' => $env['DB_PORT'] ?? 3306,
-        'charset' => $env['DB_CHARSET'] ?? '',
+        'host' => $env['DB_HOST'],
+        'dbname' => $env['DB_NAME'],
+        'user' => $env['DB_USER'],
+        'password' => $env['DB_PASS'],
+        'port' => $env['DB_PORT'],
     ],
-    'base_url' => rtrim($env['BASE_URL'] ?? 'http://localhost', '/'),
+    'base_url' => rtrim($env['BASE_URL'], '/'),
     'mail' => [
-        'smtp_host' => $env['SMTP_HOST'] ?? '',
-        'smtp_port' => $env['SMTP_PORT'] ?? 465,
-        'smtp_user' => $env['SMTP_USER'] ?? '',
-        'smtp_pass' => $env['SMTP_PASS'] ?? '',
-        'from_email' => $env['MAIL_FROM'] ?? '',
-        'from_name' => $env['MAIL_NAME'] ?? '',
+        'smtp_host' => $env['SMTP_HOST'],
+        'smtp_port' => $env['SMTP_PORT'],
+        'smtp_user' => $env['SMTP_USER'],
+        'smtp_pass' => $env['SMTP_PASS'],
+        'from_email' => $env['MAIL_FROM'],
+        'from_name' => $env['MAIL_NAME'],
     ],
 ];

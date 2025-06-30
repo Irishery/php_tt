@@ -11,20 +11,6 @@ class Analytics
         $this->pdo = Database::connect();
     }
 
-    public function logClick(int $urlId, string $ip): bool
-    {
-        $country = $this->resolveCountry($ip);
-
-        $stmt = $this->pdo->prepare("
-        INSERT INTO url_analytics (url_id, ip_address, country)
-        VALUES (?, ?, ?)
-    ");
-
-        $this->addClickToUrls($urlId);
-
-        return $stmt->execute([$urlId, $ip, $country]);
-    }
-
     private function addClickToUrls(int $urlId): void
     {
         $stmt = $this->pdo->prepare("
@@ -55,15 +41,18 @@ class Analytics
         return $data['country'] ?? null;
     }
 
-
-
-    public function getClickCount(int $urlId): int
+    public function logClick(int $urlId, string $ip): bool
     {
+        $country = $this->resolveCountry($ip);
+
         $stmt = $this->pdo->prepare("
-            SELECT COUNT(*) FROM url_analytics WHERE url_id = ?
-        ");
-        $stmt->execute([$urlId]);
-        return (int)$stmt->fetchColumn();
+        INSERT INTO url_analytics (url_id, ip_address, country)
+        VALUES (?, ?, ?)
+    ");
+
+        $this->addClickToUrls($urlId);
+
+        return $stmt->execute([$urlId, $ip, $country]);
     }
 
     public function getClicks(int $urlId): array

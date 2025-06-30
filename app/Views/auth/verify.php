@@ -1,5 +1,4 @@
 <?php
-// В начале страницы, если сессия не стартована:
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }

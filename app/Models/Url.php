@@ -14,13 +14,6 @@ class Url
         $stmt->execute([$original, $short, $user_id]);
     }
 
-    public function findByCode($code)
-    {
-        $stmt = $this->pdo->prepare("SELECT original_url FROM urls WHERE short_code = ?");
-        $stmt->execute([$code]);
-        return $stmt->fetchColumn();
-    }
-
     public function findFullByCode(string $code): array|false
     {
         $stmt = $this->pdo->prepare("SELECT * FROM urls WHERE short_code = ?");

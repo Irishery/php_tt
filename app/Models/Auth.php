@@ -95,26 +95,6 @@ class Auth
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function findByUsername(string $username): array|false
-    {
-        $stmt = $this->pdo->prepare("SELECT * FROM users WHERE user_name = ?");
-        $stmt->execute([$username]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-
-    public function findById(int $id): array|false
-    {
-        $stmt = $this->pdo->prepare("SELECT * FROM users WHERE id = ?");
-        $stmt->execute([$id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-
-    public function isAuthenticated(): bool
-    {
-        session_start();
-        return isset($_SESSION['user_id']);
-    }
-
     public function saveApiToken(int $userId, string $token): void
     {
         $stmt = $this->pdo->prepare("UPDATE users SET api_token = ? WHERE id = ?");

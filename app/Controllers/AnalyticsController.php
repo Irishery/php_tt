@@ -14,11 +14,8 @@ class AnalyticsController extends Controller
         $this->baseUrl = $config['base_url'];
     }
 
-    public function index()
+    private function getStats($userId): array
     {
-        $this->requireAuth();
-
-        $userId = $_SESSION['user_id'];
         $urlModel = new Url();
         $analytics = new Analytics();
 
@@ -46,13 +43,23 @@ class AnalyticsController extends Controller
             }
         }
 
-        $data = [
+        return [
             'stats' => $stats,
             'markers' => $markers,
             'base_url' => $this->baseUrl,
+            'short_url' => $this->baseUrl . '/r/' . $link['short_code']
         ];
+    }
 
-        $acceptJson = strpos($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') !== false;
+    public function index()
+    {
+        $this->requireAuth();
+
+        $userId = $_SESSION['user_id'];
+
+        $data = $this->getStats($userId);
+
+        $acceptJson = strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false;
         if ($acceptJson) {
             $this->respondJson($data);
         } else {
@@ -62,21 +69,10 @@ class AnalyticsController extends Controller
 
     public function apiIndex()
     {
-        $this->requireApiAuth(); // проверка токена
+        $this->requireApiAuth();
+
         $userId = $_SESSION['user_id'];
 
-        $urlModel = new Url();
-
-        $userLinks = $urlModel->getAllByUser($userId);
-        $stats = [];
-
-        foreach ($userLinks as $link) {
-            $stats[] = [
-                'url' => $link,
-                'short_url' => $this->baseUrl . '/r/' . $link['short_code'],
-            ];
-        }
-
-        $this->respondJson(['data' => $stats]);
+        $this->respondJson($this->getStats($userId));
     }
 }

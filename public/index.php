@@ -27,12 +27,14 @@ $router->post('/register', 'AuthController@register');
 
 $router->get('/logout', 'AuthController@logout');
 
-// ANAL
+// ANALYTICS
 $router->get('/analytics', 'AnalyticsController@index');
 
+// VERIFICATION
 $router->get('/verify', 'AuthController@verify');
 $router->post('/resend-verification', 'AuthController@resend');
 
+// API
 $router->post('/api/login', 'AuthController@apiLogin');
 $router->get('/api/analytics', 'AnalyticsController@apiIndex');
 $router->get('/api/shorten', 'UrlController@apiShorten');

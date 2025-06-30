@@ -4,14 +4,6 @@ require_once __DIR__ . '/../Models/Auth.php';
 
 class AuthController extends Controller
 {
-    private string $baseUrl;
-
-    public function __construct()
-    {
-        $config = require __DIR__ . '/../../config/config.php';
-        $this->baseUrl = $config['base_url'];
-    }
-
     public function showLogin()
     {
         $this->respondView('auth/login');
@@ -21,8 +13,8 @@ class AuthController extends Controller
     {
         session_start();
 
-        $email = $_POST['email'] ?? '';
-        $password = $_POST['password'] ?? '';
+        $email = $_POST['email'];
+        $password = $_POST['password'];
 
         $auth = new Auth();
         $user = $auth->findByEmail($email);
@@ -47,7 +39,7 @@ class AuthController extends Controller
     {
         if (
             $_SERVER['REQUEST_METHOD'] !== 'POST' ||
-            strpos($_SERVER['CONTENT_TYPE'] ?? '', 'application/json') === false
+            strpos($_SERVER['CONTENT_TYPE'], 'application/json') === false
         ) {
             return $this->respondError('Bad request', 400);
         }
@@ -86,9 +78,9 @@ class AuthController extends Controller
 
     public function register()
     {
-        $username = $_POST['username'] ?? '';
-        $email = $_POST['email'] ?? '';
-        $password = $_POST['password'] ?? '';
+        $username = $_POST['username'];
+        $email = $_POST['email'];
+        $password = $_POST['password'];
 
         $auth = new Auth();
         if ($auth->register($username, $email, $password)) {
@@ -101,7 +93,7 @@ class AuthController extends Controller
 
     public function verify()
     {
-        $token = $_GET['token'] ?? '';
+        $token = $_GET['token'];
         $auth = new Auth();
 
         if ($auth->verify($token)) {
@@ -119,7 +111,7 @@ class AuthController extends Controller
 
     public function resend()
     {
-        $email = $_POST['email'] ?? '';
+        $email = $_POST['email'];
         $auth = new Auth();
 
         $user = $auth->findByEmail($email);

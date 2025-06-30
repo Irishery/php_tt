@@ -3,7 +3,7 @@ class Controller
 {
     public function view(string $template, array $params = [])
     {
-        extract($params); // превращает ['error' => 'x'] в $error
+        extract($params);
         ob_start();
         require __DIR__ . "/../Views/{$template}.php";
         $content = ob_get_clean();
@@ -40,7 +40,7 @@ class Controller
     protected function requireApiAuth()
     {
         $headers = getallheaders();
-        $authHeader = $headers['Authorization'] ?? '';
+        $authHeader = $headers['Authorization'];
 
         if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
             $token = $matches[1];

@@ -28,7 +28,7 @@ class UrlController extends Controller
 
     public function shorten()
     {
-        $isJson = strpos($_SERVER['CONTENT_TYPE'] ?? '', 'application/json') !== false;
+        $isJson = strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false;
 
         if ($isJson) {
             $this->requireApiAuth();
@@ -45,7 +45,7 @@ class UrlController extends Controller
             ? json_decode(file_get_contents('php://input'), true)
             : $_POST;
 
-        $original = trim($data['url'] ?? '');
+        $original = trim($data['url']);
 
         if (empty($original) || !filter_var($original, FILTER_VALIDATE_URL)) {
             return $this->respondError('Неверный формат URL', 400);
@@ -75,7 +75,7 @@ class UrlController extends Controller
         $userId = $_SESSION['user_id'];
 
         $input = json_decode(file_get_contents('php://input'), true);
-        $original = trim($input['url'] ?? '');
+        $original = trim($input['url']);
 
         if (!filter_var($original, FILTER_VALIDATE_URL)) {
             return $this->respondError('Некорректный URL', 400);
