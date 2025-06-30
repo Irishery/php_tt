@@ -162,7 +162,7 @@ Authorization: Bearer {token}
 
 ### Сокращение URL через API
 
-**GET** `/api/shorten`
+**POST** `/api/shorten`
 `Content-Type: application/json`
 (требуется авторизация)
 
