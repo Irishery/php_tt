@@ -18,6 +18,7 @@ class Auth
         $this->baseUrl = $config['base_url'];
     }
 
+    // AUTH
     public function register(string $username, string $email, string $password): bool
     {
         if ($this->findByEmail($email)) return false;
@@ -34,19 +35,6 @@ class Auth
         $this->sendVerificationEmail($email, $token);
         return true;
     }
-    public function sendVerificationEmail(string $email, string $token): void
-    {
-        $url = "$this->baseUrl/verify?token=$token";
-        $body = "Здравствуйте! Подтвердите ваш email, перейдя по ссылке:\n\n$url";
-
-        MailService::send($email, 'Подтверждение email', $body);
-    }
-    public function setVerificationToken(int $userId, string $token): void
-    {
-        $stmt = $this->pdo->prepare("UPDATE users SET verification_token = ? WHERE id = ?");
-        $stmt->execute([$token, $userId]);
-    }
-
 
     public function login(string $email, string $password): int|false
     {
@@ -65,6 +53,33 @@ class Auth
         return (int)$user['id'];
     }
 
+    public function logout(): void
+    {
+        session_start();
+        session_destroy();
+    }
+
+    private function updateLastLogin(int $userId): void
+    {
+        $stmt = $this->pdo->prepare("UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?");
+        $stmt->execute([$userId]);
+    }
+
+    // VERIFY
+    public function sendVerificationEmail(string $email, string $token): void
+    {
+        $url = "$this->baseUrl/verify?token=$token";
+        $body = "Здравствуйте! Подтвердите ваш email, перейдя по ссылке:\n\n$url";
+
+        MailService::send($email, 'Подтверждение email', $body);
+    }
+    public function setVerificationToken(int $userId, string $token): void
+    {
+        $stmt = $this->pdo->prepare("UPDATE users SET verification_token = ? WHERE id = ?");
+        $stmt->execute([$token, $userId]);
+    }
+
+
     public function verify(string $token): bool
     {
         $stmt = $this->pdo->prepare("SELECT id FROM users WHERE verification_token = ?");
@@ -81,13 +96,7 @@ class Auth
         return false;
     }
 
-
-    private function updateLastLogin(int $userId): void
-    {
-        $stmt = $this->pdo->prepare("UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?");
-        $stmt->execute([$userId]);
-    }
-
+    // HELPERS
     public function findByEmail(string $email): array|false
     {
         $stmt = $this->pdo->prepare("SELECT * FROM users WHERE email = ?");
@@ -106,12 +115,5 @@ class Auth
         $stmt = $this->pdo->prepare("SELECT * FROM users WHERE api_token = ?");
         $stmt->execute([$token]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-
-
-    public function logout(): void
-    {
-        session_start();
-        session_destroy();
     }
 }
