@@ -46,8 +46,7 @@ class AnalyticsController extends Controller
         return [
             'stats' => $stats,
             'markers' => $markers,
-            'base_url' => $this->baseUrl,
-            'short_url' => $this->baseUrl . '/r/' . $link['short_code']
+            'base_url' => $this->baseUrl
         ];
     }
 
